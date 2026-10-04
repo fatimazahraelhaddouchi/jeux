@@ -1,0 +1,832 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QuizMaster | Quiz Culture Générale</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.35), transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(37, 99, 235, 0.30), transparent 30%),
+                #0f172a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 850px;
+        }
+
+        /* HEADER */
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 23px;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.35);
+        }
+
+        .logo h1 {
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .logo span {
+            display: block;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 3px;
+        }
+
+        .badge {
+            padding: 9px 15px;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        /* CARD */
+
+        .quiz-card {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 28px;
+            padding: 35px;
+            box-shadow:
+                0 25px 60px rgba(0,0,0,0.35);
+        }
+
+        /* TOP INFO */
+
+        .top-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .question-number {
+            color: #c4b5fd;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .score {
+            background: rgba(139,92,246,0.15);
+            color: #c4b5fd;
+            padding: 8px 14px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* PROGRESS */
+
+        .progress-container {
+            height: 8px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 35px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+            border-radius: 20px;
+            transition: width 0.4s ease;
+        }
+
+        /* QUESTION */
+
+        .question {
+            font-size: clamp(24px, 4vw, 34px);
+            line-height: 1.3;
+            font-weight: 800;
+            margin-bottom: 30px;
+            letter-spacing: -0.5px;
+        }
+
+        /* ANSWERS */
+
+        .answers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .answer {
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.055);
+            color: #e2e8f0;
+            padding: 18px;
+            border-radius: 16px;
+            text-align: left;
+            font-size: 15px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .answer:hover {
+            transform: translateY(-3px);
+            background: rgba(139,92,246,0.16);
+            border-color: rgba(167,139,250,0.55);
+        }
+
+        .answer-letter {
+            display: inline-flex;
+            width: 32px;
+            height: 32px;
+            justify-content: center;
+            align-items: center;
+            border-radius: 9px;
+            background: rgba(255,255,255,0.08);
+            margin-right: 10px;
+            font-weight: 700;
+            color: #c4b5fd;
+        }
+
+        .answer.correct {
+            background: rgba(34,197,94,0.18);
+            border-color: #22c55e;
+            color: #bbf7d0;
+        }
+
+        .answer.wrong {
+            background: rgba(239,68,68,0.18);
+            border-color: #ef4444;
+            color: #fecaca;
+        }
+
+        .answer.disabled {
+            cursor: default;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .hint {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .next-btn {
+            border: none;
+            padding: 13px 23px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+            color: white;
+            font-family: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.25s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .next-btn.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99,102,241,0.35);
+        }
+
+        /* RESULT */
+
+        .result {
+            text-align: center;
+            display: none;
+        }
+
+        .result-icon {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 25px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 42px;
+            box-shadow: 0 15px 35px rgba(99,102,241,0.3);
+        }
+
+        .result h2 {
+            font-size: 34px;
+            margin-bottom: 10px;
+        }
+
+        .result p {
+            color: #94a3b8;
+            margin-bottom: 25px;
+        }
+
+        .final-score {
+            font-size: 55px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #c4b5fd, #60a5fa);
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 25px;
+        }
+
+        .restart {
+            border: none;
+            padding: 15px 28px;
+            border-radius: 13px;
+            background: white;
+            color: #0f172a;
+            font-family: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .restart:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ANIMATION */
+
+        .fade {
+            animation: fadeIn 0.35s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 650px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .quiz-card {
+                padding: 22px;
+                border-radius: 22px;
+            }
+
+            .answers {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                margin-bottom: 18px;
+            }
+
+            .badge {
+                display: none;
+            }
+
+            .question {
+                font-size: 25px;
+            }
+
+            .hint {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                🧠
+            </div>
+
+            <div>
+                <h1>QuizMaster</h1>
+                <span>Culture Générale</span>
+            </div>
+
+        </div>
+
+        <div class="badge">
+            🎯 Mode classique
+        </div>
+
+    </div>
+
+
+    <!-- QUIZ -->
+
+    <div class="quiz-card">
+
+        <div id="quiz">
+
+            <div class="top-info">
+
+                <div class="question-number">
+                    Question <span id="current">1</span>
+                    / <span id="total">5</span>
+                </div>
+
+                <div class="score">
+                    Score : <span id="score">0</span>
+                </div>
+
+            </div>
+
+
+            <div class="progress-container">
+
+                <div
+                    class="progress-bar"
+                    id="progressBar">
+                </div>
+
+            </div>
+
+
+            <div
+                class="question fade"
+                id="question">
+            </div>
+
+
+            <div
+                class="answers"
+                id="answers">
+            </div>
+
+
+            <div class="footer">
+
+                <div class="hint">
+                    💡 Sélectionnez une réponse
+                </div>
+
+                <button
+                    class="next-btn"
+                    id="nextBtn">
+                    Question suivante →
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- RESULT -->
+
+        <div class="result" id="result">
+
+            <div class="result-icon">
+                🏆
+            </div>
+
+            <h2>Quiz terminé !</h2>
+
+            <p>
+                Félicitations, vous avez terminé le quiz.
+            </p>
+
+            <div
+                class="final-score"
+                id="finalScore">
+                0/5
+            </div>
+
+            <button
+                class="restart"
+                id="restartBtn">
+                ↻ Recommencer le quiz
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* =========================
+       QUESTIONS
+    ========================= */
+
+    const questions = [
+
+        {
+            question: "Quelle est la capitale du Japon ?",
+
+            choices: [
+                "Tokyo",
+                "Kyoto",
+                "Osaka",
+                "Hiroshima"
+            ],
+
+            answer: "Tokyo"
+        },
+
+        {
+            question: "Quelle planète est surnommée la planète rouge ?",
+
+            choices: [
+                "Vénus",
+                "Mars",
+                "Jupiter",
+                "Saturne"
+            ],
+
+            answer: "Mars"
+        },
+
+        {
+            question: "Combien de continents y a-t-il ?",
+
+            choices: [
+                "5",
+                "6",
+                "7",
+                "8"
+            ],
+
+            answer: "7"
+        },
+
+        {
+            question: "Quel est le plus grand océan du monde ?",
+
+            choices: [
+                "Océan Atlantique",
+                "Océan Indien",
+                "Océan Pacifique",
+                "Océan Arctique"
+            ],
+
+            answer: "Océan Pacifique"
+        },
+
+        {
+            question: "Quelle est la langue la plus parlée au monde ?",
+
+            choices: [
+                "Français",
+                "Anglais",
+                "Espagnol",
+                "Chinois mandarin"
+            ],
+
+            answer: "Chinois mandarin"
+        }
+
+    ];
+
+
+    /* =========================
+       VARIABLES
+    ========================= */
+
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+
+
+    /* =========================
+       ELEMENTS
+    ========================= */
+
+    const questionElement =
+        document.getElementById("question");
+
+    const answersElement =
+        document.getElementById("answers");
+
+    const currentElement =
+        document.getElementById("current");
+
+    const totalElement =
+        document.getElementById("total");
+
+    const scoreElement =
+        document.getElementById("score");
+
+    const progressBar =
+        document.getElementById("progressBar");
+
+    const nextButton =
+        document.getElementById("nextBtn");
+
+    const quizElement =
+        document.getElementById("quiz");
+
+    const resultElement =
+        document.getElementById("result");
+
+    const finalScoreElement =
+        document.getElementById("finalScore");
+
+    const restartButton =
+        document.getElementById("restartBtn");
+
+
+    totalElement.textContent = questions.length;
+
+
+    /* =========================
+       AFFICHER QUESTION
+    ========================= */
+
+    function showQuestion() {
+
+        answered = false;
+
+        nextButton.classList.remove("show");
+
+        const currentQuestion =
+            questions[currentIndex];
+
+
+        currentElement.textContent =
+            currentIndex + 1;
+
+
+        questionElement.classList.remove("fade");
+
+        void questionElement.offsetWidth;
+
+        questionElement.classList.add("fade");
+
+
+        questionElement.textContent =
+            currentQuestion.question;
+
+
+        answersElement.innerHTML = "";
+
+
+        const letters = ["A", "B", "C", "D"];
+
+
+        currentQuestion.choices.forEach(
+            function(choice, index) {
+
+                const button =
+                    document.createElement("button");
+
+                button.classList.add("answer");
+
+                button.innerHTML = `
+                    <span class="answer-letter">
+                        ${letters[index]}
+                    </span>
+                    ${choice}
+                `;
+
+
+                button.addEventListener(
+                    "click",
+                    function() {
+
+                        checkAnswer(
+                            button,
+                            choice
+                        );
+
+                    }
+                );
+
+
+                answersElement.appendChild(button);
+
+            }
+        );
+
+
+        updateProgress();
+    }
+
+
+    /* =========================
+       VERIFIER REPONSE
+    ========================= */
+
+    function checkAnswer(
+        selectedButton,
+        selectedAnswer
+    ) {
+
+        if (answered) {
+            return;
+        }
+
+        answered = true;
+
+
+        const correctAnswer =
+            questions[currentIndex].answer;
+
+
+        const allButtons =
+            document.querySelectorAll(".answer");
+
+
+        allButtons.forEach(
+            function(button) {
+
+                button.classList.add("disabled");
+
+
+                const text =
+                    button.textContent.trim();
+
+
+                if (text.includes(correctAnswer)) {
+
+                    button.classList.add("correct");
+
+                }
+
+            }
+        );
+
+
+        if (selectedAnswer === correctAnswer) {
+
+            selectedButton.classList.add("correct");
+
+            score++;
+
+            scoreElement.textContent = score;
+
+        } else {
+
+            selectedButton.classList.add("wrong");
+
+        }
+
+
+        nextButton.classList.add("show");
+
+    }
+
+
+    /* =========================
+       PROGRESSION
+    ========================= */
+
+    function updateProgress() {
+
+        const progress =
+            ((currentIndex) / questions.length) * 100;
+
+        progressBar.style.width =
+            progress + "%";
+
+    }
+
+
+    /* =========================
+       QUESTION SUIVANTE
+    ========================= */
+
+    nextButton.addEventListener(
+        "click",
+        function() {
+
+            currentIndex++;
+
+
+            if (currentIndex < questions.length) {
+
+                showQuestion();
+
+            } else {
+
+                showResult();
+
+            }
+
+        }
+    );
+
+
+    /* =========================
+       RESULTAT
+    ========================= */
+
+    function showResult() {
+
+        progressBar.style.width = "100%";
+
+        quizElement.style.display = "none";
+
+        resultElement.style.display = "block";
+
+        finalScoreElement.textContent =
+            score + " / " + questions.length;
+
+    }
+
+
+    /* =========================
+       RECOMMENCER
+    ========================= */
+
+    restartButton.addEventListener(
+        "click",
+        function() {
+
+            currentIndex = 0;
+
+            score = 0;
+
+            answered = false;
+
+            scoreElement.textContent = "0";
+
+            quizElement.style.display = "block";
+
+            resultElement.style.display = "none";
+
+            showQuestion();
+
+        }
+    );
+
+
+    /* =========================
+       START
+    ========================= */
+
+    showQuestion();
+
+</script>
+
+</body>
+</html>
