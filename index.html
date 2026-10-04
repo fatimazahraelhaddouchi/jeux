@@ -35,8 +35,6 @@
             max-width: 850px;
         }
 
-        /* HEADER */
-
         .header {
             display: flex;
             justify-content: space-between;
@@ -83,8 +81,6 @@
             color: #cbd5e1;
         }
 
-        /* CARD */
-
         .quiz-card {
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.12);
@@ -96,8 +92,7 @@
                 0 25px 60px rgba(0,0,0,0.35);
         }
 
-        /* TOP INFO */
-
+       
         .top-info {
             display: flex;
             justify-content: space-between;
@@ -120,7 +115,7 @@
             font-weight: 600;
         }
 
-        /* PROGRESS */
+     
 
         .progress-container {
             height: 8px;
@@ -138,7 +133,7 @@
             transition: width 0.4s ease;
         }
 
-        /* QUESTION */
+      
 
         .question {
             font-size: clamp(24px, 4vw, 34px);
@@ -148,7 +143,7 @@
             letter-spacing: -0.5px;
         }
 
-        /* ANSWERS */
+       
 
         .answers {
             display: grid;
@@ -206,7 +201,7 @@
             cursor: default;
         }
 
-        /* FOOTER */
+       
 
         .footer {
             display: flex;
@@ -244,7 +239,7 @@
             box-shadow: 0 8px 25px rgba(99,102,241,0.35);
         }
 
-        /* RESULT */
+      
 
         .result {
             text-align: center;
@@ -298,7 +293,6 @@
             transform: translateY(-2px);
         }
 
-        /* ANIMATION */
 
         .fade {
             animation: fadeIn 0.35s ease;
@@ -316,7 +310,7 @@
             }
         }
 
-        /* RESPONSIVE */
+     
 
         @media (max-width: 650px) {
 
@@ -356,14 +350,13 @@
 
 <div class="app">
 
-    <!-- HEADER -->
 
     <div class="header">
 
         <div class="logo">
 
             <div class="logo-icon">
-                🧠
+                
             </div>
 
             <div>
@@ -439,7 +432,6 @@
         </div>
 
 
-        <!-- RESULT -->
 
         <div class="result" id="result">
 
@@ -473,11 +465,6 @@
 
 
 <script>
-
-    /* =========================
-       QUESTIONS
-    ========================= */
-
     const questions = [
 
         {
@@ -548,18 +535,10 @@
     ];
 
 
-    /* =========================
-       VARIABLES
-    ========================= */
-
     let currentIndex = 0;
     let score = 0;
     let answered = false;
 
-
-    /* =========================
-       ELEMENTS
-    ========================= */
 
     const questionElement =
         document.getElementById("question");
@@ -596,11 +575,6 @@
 
 
     totalElement.textContent = questions.length;
-
-
-    /* =========================
-       AFFICHER QUESTION
-    ========================= */
 
     function showQuestion() {
 
@@ -672,10 +646,6 @@
     }
 
 
-    /* =========================
-       VERIFIER REPONSE
-    ========================= */
-
     function checkAnswer(
         selectedButton,
         selectedAnswer
@@ -736,10 +706,6 @@
     }
 
 
-    /* =========================
-       PROGRESSION
-    ========================= */
-
     function updateProgress() {
 
         const progress =
@@ -749,11 +715,6 @@
             progress + "%";
 
     }
-
-
-    /* =========================
-       QUESTION SUIVANTE
-    ========================= */
 
     nextButton.addEventListener(
         "click",
@@ -776,10 +737,6 @@
     );
 
 
-    /* =========================
-       RESULTAT
-    ========================= */
-
     function showResult() {
 
         progressBar.style.width = "100%";
@@ -792,11 +749,6 @@
             score + " / " + questions.length;
 
     }
-
-
-    /* =========================
-       RECOMMENCER
-    ========================= */
 
     restartButton.addEventListener(
         "click",
@@ -819,10 +771,6 @@
         }
     );
 
-
-    /* =========================
-       START
-    ========================= */
 
     showQuestion();
 
